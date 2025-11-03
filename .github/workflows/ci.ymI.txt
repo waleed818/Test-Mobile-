@@ -1,0 +1,42 @@
+name: Android Appium Tests
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ نسحب الكود من GitHub
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 2️⃣ نثبت JDK
+      - name: Setup JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      # 3️⃣ نثبت Maven (لو المشروع Maven)
+      - name: Setup Maven
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      # 4️⃣ نشغّل Build + Test
+      - name: Run Appium Tests
+        run: mvn clean test
+
+      # 5️⃣ رفع تقرير الاختبارات (اختياري حسب مشروعك)
+      - name: Upload Test Reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-report
+          path: target/surefire-reports/
